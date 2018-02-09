@@ -94,12 +94,13 @@ class Vector2D (object):
 			points.reverse()
 		return points
 
-vector = Vector2D(2.0, 2.0)
-vector2 = Vector2D(2.0, 4.0)
-print 'vector: ', vector
-print 'sizeSqr: ', vector.sizeSqr()
-print 'vector.size: ', vector.size()
-print 'vector.normalizeMe: ', vector.normalizeMe()
-print 'vector.angle: ', vector.angle()
-print 'vector.angleBetween: ', vector.angleBetween(vector2)
-print Vector2D(0, 0).bresenham(Vector2D(3, 4))
+if __name__ == "__main__":
+	vector = Vector2D(2.0, 2.0)
+	vector2 = Vector2D(2.0, 4.0)
+	print 'vector: ', vector
+	print 'sizeSqr: ', vector.sizeSqr()
+	print 'vector.size: ', vector.size()
+	print 'vector.normalizeMe: ', vector.normalizeMe()
+	print 'vector.angle: ', vector.angle()
+	print 'vector.angleBetween: ', vector.angleBetween(vector2)
+	print Vector2D(0, 0).bresenham(Vector2D(3, 4))

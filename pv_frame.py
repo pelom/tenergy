@@ -1,6 +1,7 @@
 import time
 
 from frame import Component
+from frame import IconTextComponent
 from frame import Rectangle
 from frame import Frame
 
@@ -11,16 +12,16 @@ from gaugette.fonts import arial_16
 from gaugette.fonts import arial_24
 from gaugette.fonts import arial_32
 
-class Pv(Component):
-	def __init__(self, wid=0, hei=0):
-		super(self.__class__, self).__init__(0, 0, wid, hei, 0)
+class Pv(IconTextComponent):
+	def __init__(self, wid=0, hei=0, title='', text=''):
+		IconTextComponent.__init__(self, wid, hei, title, text)
 		#self.border = True
 
 	def draw(self, display):
 		print 'Pv.draw() '
 		super(self.__class__, self).draw(display)
-		display.led.draw_text2(0, 0, 'PAINEL > CORRENTE', 1)
-		display.setString('8,88 A ', arial_16,  Align.RIGHT_BOTTOM)
+		#display.led.draw_text2(0, 0, 'PAINEL > CORRENTE', 1)
+		#display.setString('8,88 A ', arial_16,  Align.RIGHT_BOTTOM)
 
 		r = 8
 		x1 = 0

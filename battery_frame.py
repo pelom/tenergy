@@ -1,5 +1,7 @@
 import time
+
 from frame import Component
+from frame import IconTextComponent
 from frame import Rectangle
 from frame import Frame
 
@@ -8,9 +10,10 @@ from gaugette.fonts import arial_16
 from gaugette.fonts import arial_24
 from gaugette.fonts import arial_32
 
-class Battery(Component):
-	def __init__(self, wid=0, hei=0):
-		super(self.__class__, self).__init__(0, 0, wid, hei, 0)
+class Battery(IconTextComponent):
+	def __init__(self, wid=0, hei=0, title='', text=''):
+		print 'Battery.__init__()'
+		IconTextComponent.__init__(self, wid, hei, title, text)
 
 		self.widthPole = 3
 		self.marginPole = self.widthPole * 2
@@ -24,28 +27,14 @@ class Battery(Component):
 
 	def draw(self, display):
 		print 'Baterry.draw() '
-		super(self.__class__, self).draw(display)
-		display.led.draw_text2(0, 0, 'BATERIA > TENSAO', 1)
-		display.setString('12,8 v ', arial_16,  Align.RIGHT_BOTTOM)
+		IconTextComponent.draw(self, display)
+
 		display.drawRectangle(self.body.point.x, 14, self.body.wid, self.body.hei)
 		self.drawPole(display, self.body.point.x, 14, self.body.wid, self.body.hei)
-		#self.drawPerc(display, x, y, wid, hei)
 
-		self.drawPerc(display, self.xMargin(), self.hMargin(), self.body.wid, self.body.hei, 0.2)
-		display.led.display()
-		time.sleep(1)
-
-		self.drawPerc(display, self.xMargin(), self.hMargin(), self.body.wid, self.body.hei, 0.5)
-		display.led.display()
-		time.sleep(1)
-
-		self.drawPerc(display, self.xMargin(), self.hMargin(), self.body.wid, self.body.hei, 0.75)
-		display.led.display()
-		time.sleep(1)
-
-		self.drawPerc(display, self.xMargin(), self.hMargin(), self.body.wid, self.body.hei, 1)
-		display.led.display()
-		time.sleep(1)
+		xMargin = 3
+		yMargin = 1
+		self.drawAnimation(display, self.xMargin(), self.hMargin(), self.body.wid, self.body.hei, 0.2, xMargin, yMargin)
 
 	def drawPole(self, display, posX, posY, wid, hei):
 		print 'Baterry.drawPole() '
@@ -58,16 +47,37 @@ class Battery(Component):
 		x2 = posX + (wid - self.widthPole - self.marginPole)
 		display.drawFillRectangle(x2, y, self.widthPole, self.widthPole)
 
-	def drawPerc(self, display, posX, posY, wid, hei, value):
-		marginX = 3
-		marginY = 1
+	def drawAnimation(self, display, posX, posY, wid, hei, value, xMargin, yMargin):
+		self.drawPerc(display, self.xMargin(), self.hMargin(), self.body.wid, self.body.hei, 0.2, xMargin, yMargin)
+		display.led.display()
+		time.sleep(0.3)
 
+		self.drawPerc(display, self.xMargin(), self.hMargin(), self.body.wid, self.body.hei, 0.5, xMargin, yMargin)
+		display.led.display()
+		time.sleep(0.3)
+
+		self.drawPerc(display, self.xMargin(), self.hMargin(), self.body.wid, self.body.hei, 0.75, xMargin, yMargin)
+		display.led.display()
+		time.sleep(0.3)
+
+		self.drawPerc(display, self.xMargin(), self.hMargin(), self.body.wid, self.body.hei, 1, xMargin, yMargin)
+		display.led.display()
+		#time.sleep(1)
+
+		#self.drawPerc(display, self.xMargin(), self.hMargin(), self.body.wid, self.body.hei, 0, xMargin, yMargin)
+		#display.led.display()
+
+	def drawPerc(self, display, posX, posY, wid, hei, value, xMargin, yMargin):
 		y = posY + hei
 		n = int(14 * value)
 
-		for i in range(2, n, marginY):
-			print i
-			display.drawFillRectangle(posX + marginX, y-i, wid-(marginX*2), 1)
+		x = posX + xMargin
+		w = wid - (xMargin*2)
+
+		display.led.clear_block(x, posY- self.border, w, hei-2)
+
+		for i in range(2, n, yMargin):
+			display.drawFillRectangle(x, y-i, w, 1)
 
 if __name__ == "__main__":
 	baterry = Battery(40, 16)

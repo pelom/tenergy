@@ -1,5 +1,6 @@
 from display import Display
-
+from display import Align
+from display import Font
 from vector2D import Vector2D
 
 class Rectangle(object):
@@ -13,6 +14,7 @@ class Rectangle(object):
 
 class Component(object):
 	def __init__(self,  x=0, y=0, wid=0, hei=0, margin=0):
+		print 'Component.__init__'
 		self.point = Vector2D(x, y)
 		self.wid = wid
 		self.hei = hei
@@ -44,20 +46,48 @@ class Component(object):
 	def hMargin(self):
 		return self.hei - self.margin * 2
 
+class IconTextComponent(Component):
+	def __init__(self, wid=0, hei=0, title='', text=''):
+		print 'IconTextComponent.__init__'
+		Component.__init__(self, 0, 0, wid, hei, 0)
+		self.text = text
+		self.title = title
+		self.align = Align.RIGHT_BOTTOM
+
+	def draw(self, display):
+		print 'IconTextComponent.draw'
+		Component.draw(self, display)
+
+		display.led.draw_text2(0, 0, self.title, 1, 2)
+
+		font = display.FONT_24 if len(self.text) <= 5 else display.FONT_16
+		display.setString(self.text, font,  self.align)
+
 class Frame(Component):
 	def __init__(self,  x=0, y=0, wid=0, hei=0, margin=1):
 		super(self.__class__, self).__init__(x, y, wid, hei, margin)
 		self.components = []
 		self.display = Display()
 		self.display.init()
+		self.title = ''
 
 	def draw(self):
-		super(self.__class__, self).draw(self.display)
+		Component.draw(self, self.display)
+
+		print self.display.led.font.rows
+
+		#self.display.led.draw_text2(self.point.x, self.point.y, self.title, 1, 2)
+
+		#font = self.display.FONT_24 if len(self.text) <= 5 else self.display.FONT_16
+		#self.display.setString(self.text, font,  Align.RIGHT_BOTTOM)
 
 		for component in self.components:
+			component.point.x = 0
+			component.point.y = self.display.led.font.rows + 1
 			component.draw(self.display);
 
 		self.display.led.display()
+		
 	def show(self):
 		self.draw()
 

@@ -15,6 +15,11 @@ from gaugette.fonts import arial_32
 
 from enum import Enum
 
+class Font(Enum):
+	BIG = arial_32
+	SMALL = arial_16
+	MEDIUM = arial_24
+
 class Align(Enum):
 	LEFT 			= 1
 	RIGHT			= 2
@@ -40,12 +45,14 @@ class Display (object):
 		self.rows = rows
 		self.cols = cols
 		self.buffer_cols = buffer_cols
-
 		self.gpio = gaugette.gpio.GPIO()
 		self.spi = gaugette.spi.SPI(spi_bus, spi_device)
 
 		# Change rows & cols values depending on your display dimensions.
 		self.led = gaugette.ssd1306.SSD1306(self.gpio, self.spi, reset_pin=RESET_PIN, dc_pin=DC_PIN, rows=rows, cols=cols, buffer_cols=buffer_cols)
+		self.FONT = arial_24
+		self.FONT_16 = arial_16
+		self.FONT_24 = arial_24
 
 	def init(self):
 		self.led.begin()
@@ -79,14 +86,19 @@ class Display (object):
 	def definePoint(self, align, width, font):
 		print 'definePoint() align: ', align
 		one = 1
+
 		point = self.definePointX(align, width, font, one)
-		if (point != None): return point
+		if (point != None):
+			return point
 
 		point = self.definePointXY(align, width, font, one)
-		if (point != None): return point
+		if (point != None):
+			return point
 
 		point = self.definePointY(align, width, font, one)
-		if (point != None): return point
+		if (point != None):
+			return point
+
 		return Vector2D(0, 0)
 
 	def definePointX(self, align, width, font, one):
@@ -103,7 +115,7 @@ class Display (object):
 			posY = self.center(font.char_height, 'rows')
 
 		elif (align == Align.LEFT_BOTTOM):
-			posY = (self.rows - font.char_height) - one
+			posY = (self.rows - font.char_height) + one
 
 		else: return None
 
@@ -126,11 +138,11 @@ class Display (object):
 
 		elif (align == Align.RIGHT_BOTTOM):
 			posX = (width - self.cols) * -one
-			posY = (self.rows - font.char_height) -one
+			posY = (self.rows - font.char_height) + one
 
 		elif (align == Align.CENTER_BOTTOM):
 			posX = self.center(width, cols)
-			posY = (self.rows - font.char_height) -one
+			posY = (self.rows - font.char_height) + one
 
 		else: return None
 
@@ -149,10 +161,11 @@ class Display (object):
 			posY = self.center(font.char_height, rows)
 
 		elif (align == Align.RIGHT_BOTTOM):
-			posY = (self.rows - font.char_height) - one
+			print align
+			posY = (self.rows + font.char_height) + one
 
 		elif (align == Align.CENTER_BOTTOM):
-			posY = (self.rows - font.char_height) - one
+			posY = (self.rows - font.char_height) + one
 
 		else: return None
 
@@ -242,102 +255,18 @@ class Display (object):
 if __name__ == "__main__":
 	display = Display()
 	display.init()
-#	#display.drawLine(0, 0, 128, 32)
-#	display.drawRectangle(0, 0, 127, 31)
-#	display.drawFillRectangle(10, 10, 127/2, 5)
-#	display.led.display()
 
-	display.setString('12.6 V', arial_24,  Align.RIGHT_BOTTOM)
-	#display.led.draw_text2(0, 0, 'Bateria', 1)
-
-	g = 8
-
-	x1 = 28
-	y1 = 10
-
-	x2 = 0
-	y2 = 28
-
-	p1 = Vector2D(x2, y2)
-	p2 = Vector2D(x1, y2)
-	p3 = Vector2D(x1+g, y1)
-	p4 = Vector2D(x2+g, y1)
-
-	display.drawLine(p1.x, p1.y, p2.x, p2.y)
-	display.drawLine(p2.x, p2.y, p3.x, p3.y)
-	display.drawLine(p3.x, p3.y, p4.x, p4.y)
-	display.drawLine(p4.x, p4.y, p1.x, p1.y)
-
-	ang = p4.angleBetween(p1)
-
-	x = p1.x + (p4.x - p1.x)/2
-	y = p1.y + (p4.y - p1.y)/2
-
-	w = p2.x + (p3.x - p2.x)/2
-	z = p2.y + (p3.y - p2.y)/2
-
-	display.drawLine(int(x), int(y), int(w), int(z))
-
-	xt = p1.x + (p2.x - p1.x)/2
-	xw = p4.x + (p3.x - p4.x)/2
-	display.drawLine(int(xt), int(p1.y), int(xw), int(p4.y))
-#	baterry = Baterry(0, 10, 40, 16);
-
-#	while True:
-#		baterry.draw(display)
-
-#		baterry.drawPerc(display, baterry.body.point.x, baterry.body.point.y, baterry.body.wid, baterry.body.hei, 0.2)
-#		display.led.display()
-#		time.sleep(1)
-
-#		baterry.drawPerc(display, baterry.body.point.x, baterry.body.point.y, baterry.body.wid, baterry.body.hei, 0.5)
-#		display.led.display()
-#		time.sleep(1)
-
-#		baterry.drawPerc(display, baterry.body.point.x, baterry.body.point.y, baterry.body.wid, baterry.body.hei, 0.78)
-#		display.led.display()
-#		time.sleep(1)
-
-#		baterry.drawPerc(display, baterry.body.point.x, baterry.body.point.y, baterry.body.wid, baterry.body.hei, 1)
-#		display.led.display()
-#		time.sleep(1)
-
-
-#	posRectX = 0
-#	posRectY = 12
-#	widRect = 36
-#	heiRect = 12
-
-#	wid = 3
-#	margin = 6
-
-#	display.drawRectangle(posRectX, posRectY, widRect, heiRect)
-
-#	display.drawFillRectangle(posRectX+margin, posRectY-wid, wid, wid)
-#	display.drawFillRectangle(posRectX+widRect-wid-margin, posRectY-wid, wid, wid)
-
-#	marginLoad = 4
-#	display.drawFillRectangle(posRectX+marginLoad, posRectY+3, widRect-(marginLoad*2), 1)
-#	display.drawFillRectangle(posRectX+marginLoad, posRectY+6, widRect-(marginLoad*2), 1)
-#	display.drawFillRectangle(posRectX+marginLoad, posRectY+9, widRect-(marginLoad*2), 1)
-#	display.drawFillRectangle(posRectX+marginLoad, posRectY+12, widRect-(marginLoad*2), 1)
-
-	display.led.display()
-
-	#display.led.clear_block(posRectX, posRectY, widRect+1, heiRect+1)
-	#display.led.display()
-
-#	while True:
-#		display.setString('Texto longo', arial_16,  Align.MODAL)
-#		display.led.draw_text2(0, 0, '--->', 1)
-#		display.blink(10, 0.1)
-##		display.loading();
-#		display.led.normal_display()
-#		i = 0
-#		for name, member in Align.__members__.items():
-#			print name, member
-#			i=i+1
-#			display.setString(i.__str__()*14, arial_16,  member)
-#			display.led.clear_display()
-#			#display.led.display()
-#			time.sleep(1)
+	while True:
+		display.setString('Texto longo', arial_16,  Align.MODAL)
+		display.led.draw_text2(0, 0, '--->', 1)
+		display.blink(10, 0.1)
+#		display.loading();
+		display.led.normal_display()
+		i = 0
+		for name, member in Align.__members__.items():
+			print name, member
+			i=i+1
+			display.setString(i.__str__()*1, arial_16,  member)
+			display.led.clear_display()
+			#display.led.display()
+			time.sleep(1)
